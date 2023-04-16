@@ -10,18 +10,22 @@ from contact import contact_agencies
 
 
 
-if __name__ == '__main__':
-
-
-    load_dotenv()
+def main():
 
     email = os.getenv("FROM_EMAIL")
     name = os.getenv("NAME")
     phone = os.getenv("PHONE")
+    contact_message = os.getenv("MESSAGE")
+
+    print("found contact informations: ", email, name, phone)
 
     adds = AnnonceRepository()
 
+    print("adds: ", adds)
+
     annonces = get_annonces()
+
+    print("annonces: ", annonces)
 
     urls = set(list(itertools.chain(*[ get_urls(adds, content) for content in annonces ])))
 

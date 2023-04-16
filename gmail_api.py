@@ -19,6 +19,8 @@ import base64
 SCOPES = ['https://mail.google.com/']
 our_email = 'victor.recherche.appartement@gmail.com'
 
+#token_file = "/tmp/token.pickle"
+
 def gmail_authenticate():
     creds = None
     # the file token.pickle stores the user's access and refresh tokens, and is
@@ -34,8 +36,8 @@ def gmail_authenticate():
             flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # save the credentials for the next run
-        with open("token.pickle", "wb") as token:
-            pickle.dump(creds, token)
+        # with open("token.pickle", "wb") as token:
+        #    pickle.dump(creds, token)
     return build('gmail', 'v1', credentials=creds)
 
 def search_messages(service, query):
@@ -96,7 +98,7 @@ def get_annonces() -> list[str]:
 
         modify_request = {
             'addLabelIds': [],
-            'removeLabelIds': ['INBOX', 'UNREAD']
+            'removeLabelIds': ['UNREAD']
         }
 
         service.users().messages().modify(userId='me', id=message["id"], body=modify_request).execute()
