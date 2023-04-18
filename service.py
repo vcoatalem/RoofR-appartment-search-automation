@@ -19,7 +19,7 @@ def handler(event, context):
 
     print("found contact informations: ", email, name, phone)
 
-    adds = AnnonceRepository()
+    adds = AnnonceRepository.Basic()
 
     print("adds: ", adds)
 

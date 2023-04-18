@@ -74,9 +74,6 @@ def email_is_an_announce(email: str) -> bool:
     return "annonce" in email
 
 
-"""
-def mark_email_as_read(service, message_id):
-"""
 
 def get_annonces() -> list[str]:
     # get the Gmail API service
