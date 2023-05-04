@@ -6,7 +6,7 @@ from contact import contact
 from urllib.parse import urlparse
 
 from dotenv import load_dotenv
-from annonceRepository import AnnonceRepository
+from old.annonceRepository import AnnonceRepository
 
 
 def get_urls(adds: AnnonceRepository, content: str) -> set[str]:
