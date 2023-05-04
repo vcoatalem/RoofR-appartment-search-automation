@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from annonceRepository import AnnonceRepository
 from gmail_api import get_annonces
-from extract_mail_data import get_urls
+from old.extract_mail_data import get_urls
 from contact import contact_agencies
 
 
