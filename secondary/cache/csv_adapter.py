@@ -1,7 +1,7 @@
 import os
 import csv
-from cache_port import CachePort
-from domain_types import Annonce
+from secondary.cache.cache_port import CachePort
+from domain.domain_types import Annonce
 
 class CSVAdapter(CachePort):
     def __init__(self, filename: str) -> None:

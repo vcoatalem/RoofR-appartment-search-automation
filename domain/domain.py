@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 import os
 from domain.domain_types import Annonce
+from secondary.inbox.inbox_port import InboxPort
 import re
-from contact import contact
+from old.contact import contact
 from urllib.parse import urlparse
 
 import requests
@@ -63,8 +64,11 @@ def answer_annonce(annonce: Annonce, contact: ContactInformation) -> requests.Re
     return res
 
 
-def get_latest_annonces():
+def get_latest_annonces(inbox: InboxPort):
     
+    print(inbox.peekUnreadMails())
+
+
 
 """
 def contact_agencies(urls: list[str], repository: AnnonceRepository, email: str, name: str, phone: str) -> None:

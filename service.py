@@ -2,17 +2,16 @@
 import itertools
 import os
 
-from dotenv import load_dotenv
-from old.annonceRepository import AnnonceRepository
-from old.gmail_api import get_annonces
-from old.extract_mail_data import get_urls
-from contact import contact_agencies
+from domain.domain_types import Annonce
 
+from secondary.inbox.gmail_adapter import GmailAdapter
+from secondary.cache.csv_adapter import CSVAdapter
 
 
 def handler(event, context):
     # Your code goes here!
 
+    """
     email = os.getenv("FROM_EMAIL")
     name = os.getenv("NAME")
     phone = os.getenv("PHONE")
@@ -21,16 +20,24 @@ def handler(event, context):
 
     adds = AnnonceRepository.Basic()
 
-    print("adds: ", adds)
+    """
 
-    annonces = get_annonces()
+    gmailAdapter = GmailAdapter("victor.recherche.appartement@gmail.com")
+    csvAdapter = CSVAdapter("annonces.csv")
+    
 
+    annonces = gmailAdapter.peekUnreadMails()
     print("annonces: ", annonces)
 
+    """
     urls = set(list(itertools.chain(*[ get_urls(adds, content) for content in annonces ])))
 
     print("urls: ", urls)
 
     contact_agencies(urls, adds, email, name, phone)
-    
+    """
     return 0
+
+
+if __name__ == '__main__':
+    handler(None, None)

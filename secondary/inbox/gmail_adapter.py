@@ -15,8 +15,8 @@ from email.mime.base import MIMEBase
 from mimetypes import guess_type as guess_mime_type
 import base64
 
-from inbox_port import InboxPort
-from domain_types import Mail
+from secondary.inbox.inbox_port import InboxPort
+from domain.domain_types import Mail
 
 
 # Request all access (permission to read/send/receive emails, manage the inbox, and more)
@@ -44,8 +44,8 @@ class GmailAdapter(InboxPort):
                 flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
                 creds = flow.run_local_server(port=0)
             # save the credentials for the next run
-            # with open("token.pickle", "wb") as token:
-            #    pickle.dump(creds, token)
+            with open("token.pickle", "wb") as token:
+                pickle.dump(creds, token)
         return build('gmail', 'v1', credentials=creds)
     
     def __class_email_as_read(self, emailId) -> bool:
@@ -72,11 +72,18 @@ class GmailAdapter(InboxPort):
         try:
             # Use the Gmail API to retrieve the message with the specified ID
             message = self.service.users().messages().get(userId='me', id=message_id).execute()
-            #print(message)
+
+            print(f"message of id {message_id} -> {message}")
             # Decode the message body from base64 URL encoding
             # print(message)
 
-            print(message)
+            #print(message)
+
+
+            fromHeader = next(filter(lambda header: header['name'] == 'From', message['payload']['headers']), None)
+            #print("from header:", fromHeader)
+            subjectHeader = next(filter(lambda header: header['name'] == 'Subject', message['payload']['headers']), None)
+            #print("subject header:", subjectHeader)
 
             def getMessageBody():
                 if "parts" in message["payload"]:
@@ -84,9 +91,10 @@ class GmailAdapter(InboxPort):
                 else:
                     return base64.urlsafe_b64decode(message['payload']['body']['data']).decode('utf-8')
             
+
             return Mail(
-                sender=message['author'],
-                subject=message['subject'], #TODO: find proper attribute names
+                sender=fromHeader['value'],
+                subject=subjectHeader['value'], #TODO: find proper attribute names
                 content=getMessageBody()
             )
         
@@ -96,6 +104,7 @@ class GmailAdapter(InboxPort):
 
     def peekUnreadMails(self) -> list[Mail]:
         messages = self.__get_unread_messages()
+        print("message: ", messages[0])
         mails : list[Mail] = list(map(lambda message: self.__read_message(message["id"]), messages))
         return [ mail for mail in mails if mail is not None ]
 

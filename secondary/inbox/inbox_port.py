@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from abc import ABC, abstractmethod
 
-from domain_types import Mail
+from domain.domain_types import Mail
 
 class InboxPort(ABC):
     def __init__(self, email_address: str):

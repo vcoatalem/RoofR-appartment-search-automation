@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from abc import ABC, abstractmethod
 
-from domain_types import Annonce
+from domain.domain_types import Annonce
 
 
 class CachePort(ABC):
