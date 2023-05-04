@@ -2,7 +2,7 @@ import email_listener
 import os
 import re
 from bs4 import BeautifulSoup
-from contact import contact
+from old.contact import contact
 from urllib.parse import urlparse
 
 from dotenv import load_dotenv
