@@ -28,3 +28,14 @@ def ParseAnnonceFromUrl(url: str) -> Annonce:
         return None
     
     return res
+
+
+@dataclass
+class Mail():
+    def __init__(self, sender: str, subject: str, content: str):
+        self.sender = sender
+        self.subject = subject
+        self.content = content
+
+    def is_annonce(self) -> bool:
+        return "annonce" in self.subject

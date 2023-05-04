@@ -69,12 +69,6 @@ def read_message(service, message_id):
         return None, None
 
 
-def email_is_an_announce(email: str) -> bool:
-    email = email.lower()
-    return "annonce" in email
-
-
-
 def get_annonces() -> list[str]:
     # get the Gmail API service
     service = gmail_authenticate()
