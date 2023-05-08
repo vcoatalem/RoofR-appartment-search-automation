@@ -6,18 +6,18 @@ from dotenv import load_dotenv
 
 @dataclass
 class Annonce:
-    def __init__(self, id: int, url: str) -> None:
+    def __init__(self, id: str, url: str) -> None:
         self.id = id
         self.url = url
 
     @staticmethod
-    def __extract_id_from_url(url: str) -> int:
+    def __extract_id_from_url(url: str) -> str:
         extract_id_pattern = r"/(\d+)\.htm"
         match = re.search(pattern=extract_id_pattern, string=url)
         if match:
-            number = int(match.group(1))
+            number = match.group(1)
             return number
-        return -1
+        return None
 
     @staticmethod
     def from_url(url: str):
@@ -25,9 +25,12 @@ class Annonce:
                 id=Annonce.__extract_id_from_url(url),
                 url=url
             )
-        if res.id == -1:
+        if not res.id:
             return None
         return res
+    
+    def __hash__(self):
+        return hash(self.url)
 
 @dataclass
 class Mail():

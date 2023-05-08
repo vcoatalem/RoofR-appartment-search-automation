@@ -23,7 +23,6 @@ from json import dump, dumps
 
 
 # Request all access (permission to read/send/receive emails, manage the inbox, and more)
-
 #our_email = 'victor.recherche.appartement@gmail.com'
 
 class GmailAdapter(InboxPort):
@@ -81,12 +80,8 @@ class GmailAdapter(InboxPort):
         try:
             # Use the Gmail API to retrieve the message with the specified ID
             message = self.service.users().messages().get(userId='me', id=message_id).execute()
-
-            print(f"message of id {message_id} -> {dumps(message)}")
             # Decode the message body from base64 URL encoding
-            # print(message)
 
-            #print(message)
 
 
             fromHeader = next(filter(lambda header: header['name'] == 'From', message['payload']['headers']), None)

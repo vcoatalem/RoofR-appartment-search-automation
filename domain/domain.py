@@ -47,8 +47,8 @@ def get_latest_agency_mails(inbox: InboxPort, read: bool = False) -> list[Mail]:
 
 def extract_annonces_from_one_mail(mail: Mail, api: AnnonceAPIPort, cache: CachePort) -> set[Annonce]:
     urls = api.find_urls_in_mail(mail)
-    annonces = [ Annonce(url) for url in urls ]
-    annonces = [ x for x in filter(lambda annonce: cache.contains(annonce))]
+    annonces = [ Annonce.from_url(url) for url in urls ]
+    annonces = [ x for x in filter(lambda annonce: not cache.contains(annonce), annonces)]
     return set(annonces)
 
 def extract_annonces_from_all_mails(mails: list[Mail], api: AnnonceAPIPort, cache: CachePort) -> set[Annonce]:
@@ -63,9 +63,11 @@ def answer_annonce(annonce: Annonce, api: AnnonceAPIPort, cache: CachePort, cont
     return response
 
 
-def answer_annonces(inbox: InboxPort, cache: CachePort, api: AnnonceAPIPort, contact: ContactInformation) -> list[requests.Response]:
-    mails = get_latest_agency_mails(inbox)
+def answer_all_annonces(inbox: InboxPort, cache: CachePort, api: AnnonceAPIPort, contact: ContactInformation) -> list[requests.Response]:
+    mails = get_latest_agency_mails(inbox, read=False)
+    print(f"found {len(mails)} mails")
     annonces = extract_annonces_from_all_mails(mails, api, cache)
+    print(f"found {len(annonces)} annonces")
     responses = [ response for response in map(lambda annonce: answer_annonce(annonce, api, cache, contact), annonces)]
     cache.save()
     return responses

@@ -2,40 +2,30 @@
 import itertools
 import os
 
-from domain.domain_types import Annonce
-
+from domain.domain_types import Annonce, ContactInformation
 from secondary.inbox.gmail_adapter import GmailAdapter
 from secondary.cache.csv_adapter import CSVAdapter
+from secondary.annonceApi.mock_adapter import MockAdapter
+from secondary.annonceApi.seloger_adapter import SeLogerAdapter
 
+
+from domain.domain import answer_annonces
 
 def handler(event, context):
-    # Your code goes here!
 
-    """
-    email = os.getenv("FROM_EMAIL")
-    name = os.getenv("NAME")
-    phone = os.getenv("PHONE")
-
-    print("found contact informations: ", email, name, phone)
-
-    adds = AnnonceRepository.Basic()
-
-    """
-
-    gmailAdapter = GmailAdapter("victor.recherche.appartement@gmail.com")
+    gmailAdapter = GmailAdapter.from_env()
+    contact = ContactInformation.from_env()
     csvAdapter = CSVAdapter("annonces.csv")
-    
+    api = MockAdapter()
 
-    annonces = gmailAdapter.peekUnreadMails()
-    print("annonces: ", annonces)
+    csvAdapter.load()
 
-    """
-    urls = set(list(itertools.chain(*[ get_urls(adds, content) for content in annonces ])))
-
-    print("urls: ", urls)
-
-    contact_agencies(urls, adds, email, name, phone)
-    """
+    print("annonce mails: ", answer_annonces(
+        inbox=gmailAdapter,
+        cache=csvAdapter,
+        api=api,
+        contact=contact
+    ))
     return 0
 
 
