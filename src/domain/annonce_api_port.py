@@ -1,8 +1,7 @@
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from abc import ABC, abstractmethod
-
-from domain.domain_types import Annonce, ContactInformation, Mail
+from src.domain.domain_types import Annonce, ContactInformation, Mail
 
 
 class AnnonceAPIPort(ABC):

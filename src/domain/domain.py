@@ -2,10 +2,10 @@ from dataclasses import dataclass
 
 from dotenv import load_dotenv
 
-from domain.annonce_api_port import AnnonceAPIPort
-from domain.cache_port import CachePort
-from domain.domain_types import Annonce, ContactInformation, Mail
-from domain.inbox_port import InboxPort
+from src.domain.annonce_api_port import AnnonceAPIPort
+from src.domain.cache_port import CachePort
+from src.domain.domain_types import Annonce, ContactInformation, Mail
+from src.domain.inbox_port import InboxPort
 
 
 def get_latest_agency_mails(inbox: InboxPort, read: bool = False) -> list[Mail]:

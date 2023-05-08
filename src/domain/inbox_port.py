@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from domain.domain_types import Mail
+from src.domain.domain_types import Mail
+
 
 class InboxPort(ABC):
     def __init__(self, email_address: str):

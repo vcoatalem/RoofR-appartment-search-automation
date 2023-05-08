@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from domain.domain_types import Annonce
+from src.domain.domain_types import Annonce
 
 
 class CachePort(ABC):

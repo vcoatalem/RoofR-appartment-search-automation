@@ -8,8 +8,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 # Gmail API utils
 from googleapiclient.discovery import build
 
-from domain.domain_types import Mail
-from domain.inbox_port import InboxPort
+from src.domain.domain_types import Mail
+from src.domain.inbox_port import InboxPort
 
 # Request all access (permission to read/send/receive emails, manage the inbox, and more)
 #our_email = 'victor.recherche.appartement@gmail.com'
