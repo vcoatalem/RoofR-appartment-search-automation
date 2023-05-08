@@ -16,14 +16,13 @@ class CSVAdapter(CachePort):
     def __annonce_to_csv(annonce: Annonce) -> list[str]:
         return [annonce.id, annonce.url]
 
-    def load(self) -> list[Annonce]:
+    def load(self) -> set[Annonce]:
         if not os.path.exists(self.filename):
             return []
         with open(self.filename, newline='', mode="r") as csvfile:
             reader = csv.reader(csvfile)
-            self.annonces = []
             for row in reader:
-                self.annonces.append(CSVAdapter.__annonce_from_csv(row))
+                self.annonces.add(CSVAdapter.__annonce_from_csv(row))
         return self.annonces
     
     def save(self) -> bool:

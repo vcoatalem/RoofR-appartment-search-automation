@@ -12,11 +12,11 @@ class CachePort(ABC):
 
     def __init__(self) -> None:
         super().__init__()
-        self.annonces: list[Annonce] = [] # TODO: this should be a dictionary
-        self.annonces_to_save: list[Annonce] = []
+        self.annonces: set[Annonce] = set()
+        self.annonces_to_save: set[Annonce] = set()
 
     @abstractmethod
-    def load(self) -> list[Annonce]:
+    def load(self) -> set[Annonce]:
         pass
 
     @abstractmethod
@@ -24,12 +24,12 @@ class CachePort(ABC):
         pass
 
     def add(self, annonce: Annonce):
-        if not any(map(lambda previousAnnonce: previousAnnonce.id == annonce.id, self.annonces)):
-            self.annonces.append(annonce)
-            self.annonces_to_save.append(annonce)
+        if annonce not in self.annonces:
+            self.annonces.add(annonce)
+            self.annonces_to_save.add(annonce)
 
     def contains(self, ann: Annonce):
-        return any(annonce.id == ann.id for annonce in self.annonces)
+        return ann in self.annonces
 
 
 
