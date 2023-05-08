@@ -84,13 +84,11 @@ class GmailAdapter(InboxPort):
                 else:
                     return base64.urlsafe_b64decode(message['payload']['body']['data']).decode('utf-8')
             
-
             return Mail(
                 sender=fromHeader['value'],
                 subject=subjectHeader['value'], #TODO: find proper attribute names
                 content=getMessageBody()
             )
-        
         except:
             return None
 
@@ -99,6 +97,12 @@ class GmailAdapter(InboxPort):
         messages = self.__get_unread_messages()
         #print("message: ", messages[0])
         mails : list[Mail] = list(map(lambda message: self.__read_message(message["id"]), messages))
+        
+        import json
+        for mail in mails:
+            with open(f"mail-{mail.subject[0:10]}.out", "a", newline='') as file:
+                file.write(json.dumps(mail.__dict__))
+
         return [ mail for mail in mails if mail is not None ]
 
     def readUnreadMails(self) -> list[Mail]:
