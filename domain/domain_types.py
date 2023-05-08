@@ -29,6 +29,9 @@ class Annonce:
             return None
         return res
     
+    def __repr__(self):
+        return "Annonce(" + self.url + ")"
+
     def __hash__(self):
         return hash(self.url)
 
