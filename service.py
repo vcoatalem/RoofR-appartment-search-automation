@@ -9,7 +9,7 @@ from secondary.annonceApi.mock_adapter import MockAdapter
 from secondary.annonceApi.seloger_adapter import SeLogerAdapter
 
 
-from domain.domain import answer_annonces
+from domain.domain import answer_all_annonces
 
 def handler(event, context):
 
@@ -20,7 +20,7 @@ def handler(event, context):
 
     csvAdapter.load()
 
-    print("annonce mails: ", answer_annonces(
+    print("annonce mails: ", answer_all_annonces(
         inbox=gmailAdapter,
         cache=csvAdapter,
         api=api,
