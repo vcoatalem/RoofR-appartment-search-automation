@@ -17,6 +17,7 @@ import base64
 
 from domain.inbox_port import InboxPort
 from domain.domain_types import Mail
+from dotenv import load_dotenv
 
 from json import dump, dumps
 
@@ -29,6 +30,12 @@ class GmailAdapter(InboxPort):
     def __init__(self, email_address: str):
         super().__init__(email_address)
         self.service = self.__gmail_authenticate()
+
+    @staticmethod
+    def from_env():
+        load_dotenv()
+        mail: str = os.getenv("FROM_EMAIL")
+        return GmailAdapter(mail)
 
     def __gmail_authenticate(self):
         SCOPES = ['https://mail.google.com/']
