@@ -17,7 +17,9 @@ class CSVAdapter(CachePort):
         return [annonce.id, annonce.url]
 
     def load(self) -> list[Annonce]:
-        with open(self.filename, newline='') as csvfile:
+        if not os.path.exists(self.filename):
+            return []
+        with open(self.filename, newline='', mode="r") as csvfile:
             reader = csv.reader(csvfile)
             self.annonces = []
             for row in reader:
