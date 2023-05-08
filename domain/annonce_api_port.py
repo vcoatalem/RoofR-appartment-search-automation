@@ -15,6 +15,12 @@ class AnnonceAPIPort(ABC):
             self.wasAccepted = wasAccepted
             self.error = error
 
+        def __repr__(self):
+            if (self.wasAccepted):
+                return "AnnonceAPIPort.Response(Success)"
+            if (self.wasSent):
+                return "AnnonceAPIPort.Response(Failure)"
+            return "AnnonceAPIPort.Response(Network Error)"
 
     def __init__(self) -> None:
         super().__init__()
@@ -26,12 +32,3 @@ class AnnonceAPIPort(ABC):
     @abstractmethod
     def find_urls_in_mail(self, mail: Mail) -> set[str]:
         pass
-        """
-        pattern = r'https://www\.seloger\.com/annonces/[^ ]+'#/\d+\.htm'
-        # Use the re.findall() function to extract all URLs that match the pattern
-        links = set(re.findall(pattern, mailContent))
-
-        urls = [ urlparse(link) for link in links]
-
-        return [ url.scheme + "://" + url.netloc + url.path for url in urls ]
-        """
