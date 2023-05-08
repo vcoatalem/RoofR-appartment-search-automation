@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 from abc import ABC, abstractmethod
 
 from domain.domain_types import Mail

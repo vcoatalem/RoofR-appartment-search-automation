@@ -1,10 +1,11 @@
-import requests
 import re
-
-from domain.domain_types import Annonce, ContactInformation, Mail
-from domain.annonce_api_port import AnnonceAPIPort
-
 from urllib.parse import urlparse
+
+import requests
+
+from domain.annonce_api_port import AnnonceAPIPort
+from domain.domain_types import Annonce, ContactInformation, Mail
+
 
 class SeLogerAdapter(AnnonceAPIPort):
 
