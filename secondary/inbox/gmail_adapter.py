@@ -15,8 +15,10 @@ from email.mime.base import MIMEBase
 from mimetypes import guess_type as guess_mime_type
 import base64
 
-from secondary.inbox.inbox_port import InboxPort
+from domain.inbox_port import InboxPort
 from domain.domain_types import Mail
+
+from json import dump, dumps
 
 
 # Request all access (permission to read/send/receive emails, manage the inbox, and more)
@@ -73,7 +75,7 @@ class GmailAdapter(InboxPort):
             # Use the Gmail API to retrieve the message with the specified ID
             message = self.service.users().messages().get(userId='me', id=message_id).execute()
 
-            print(f"message of id {message_id} -> {message}")
+            print(f"message of id {message_id} -> {dumps(message)}")
             # Decode the message body from base64 URL encoding
             # print(message)
 
@@ -104,7 +106,7 @@ class GmailAdapter(InboxPort):
 
     def peekUnreadMails(self) -> list[Mail]:
         messages = self.__get_unread_messages()
-        print("message: ", messages[0])
+        #print("message: ", messages[0])
         mails : list[Mail] = list(map(lambda message: self.__read_message(message["id"]), messages))
         return [ mail for mail in mails if mail is not None ]
 
