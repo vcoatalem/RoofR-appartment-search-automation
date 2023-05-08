@@ -1,39 +1,17 @@
 from dataclasses import dataclass
 import os
-from domain.domain_types import Annonce
-from secondary.inbox.inbox_port import InboxPort
+from domain.domain_types import Annonce, Mail, ContactInformation
+from domain.inbox_port import InboxPort
+from domain.cache_port import CachePort
+from domain.annonce_api_port import AnnonceAPIPort
 import re
 from old.contact import contact
-from urllib.parse import urlparse
 
 import requests
 from dotenv import load_dotenv
 
-@dataclass
-class ContactInformation:
 
-    def __init__(self, email: str, name: str, phone: str, message: str):
-        self.email = email
-        self.name = name
-        self.phone = phone
-        self.message = message
-
-    @staticmethod
-    def from_env():
-        load_dotenv()
-        email = os.getenv("FROM_EMAIL")
-        name = os.getenv("NAME")
-        phone = os.getenv("PHONE")
-        message = "Bonjour, je suis intéressé par cet appartement ! Prenez-vous actuellement des rendez-vous pour des visites ? Si oui, je suis intéressé. Je peux vous envoyer mon dossier par mail, et suis joignable au 0760912574. Vous pouvez également trouver mon dossier sur le site du gouvernement 'DossierFacile.fr' à cette adresse: https://locataire.dossierfacile.fr/file/b04472cd-9577-4115-a88f-22daa1a6ea30 . Bonne journée !"
-
-        return ContactInformation(
-            email=email,
-            name=name,
-            phone=phone,
-            message=message
-        )
-
-        
+"""
 def get_urls_from_mail_content(mailContent: str) -> set[str]:
     #print(content)
     pattern = r'https://www\.seloger\.com/annonces/[^ ]+'#/\d+\.htm'
@@ -43,14 +21,14 @@ def get_urls_from_mail_content(mailContent: str) -> set[str]:
     urls = [ urlparse(link) for link in links]
 
     return [ url.scheme + "://" + url.netloc + url.path for url in urls ]
+"""
 
-def answer_annonce(annonce: Annonce, contact: ContactInformation) -> requests.Response:
+"""
+def contact_agency(annonce: Annonce, contact: ContactInformation) -> requests.Response:
     s = requests.Session()
-
     s.headers.update({
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36"
     })
-    
     payload = {
         "email": contact.email,
         "listingId": annonce.id,
@@ -59,14 +37,38 @@ def answer_annonce(annonce: Annonce, contact: ContactInformation) -> requests.Re
         "name": contact.name,
         "phone": contact.phone
     }
+    return s.post("https://www.seloger.com/annoncesbff/2/Contact", json=payload)
+"""
 
-    res = s.post("https://www.seloger.com/annoncesbff/2/Contact", json=payload)
-    return res
+def get_latest_agency_mails(inbox: InboxPort, read: bool = False) -> list[Mail]:
+    mails : list[Mail] = inbox.peekUnreadMails() if not read else inbox.readUnreadMails()
+    annonces = [ mail for mail in mails if mail.is_annonce() ]
+    return annonces
+
+def extract_annonces_from_mail(mail: Mail, api: AnnonceAPIPort, cache: CachePort) -> set[Annonce]:
+    urls = api.find_urls_in_mail(mail)
+    annonces = [ Annonce(url) for url in urls ]
+    annonces = [ x for x in filter(lambda annonce: cache.contains(annonce))]
+    return set(annonces)
+
+def extract_annonces_from_mails(mails: list[Mail], cache: CachePort) -> set[Annonce]:
+    set_list = [ extract_annonces_from_mail(mail, cache) for mail in mails ]
+    return set().union(*set_list)
+
+def answer_annonce(annonce: Annonce, api: AnnonceAPIPort, cache: CachePort, contact: ContactInformation) -> requests.Response:
+    response = api.contact(annonce, contact)
+    if response.status_code == 200:
+        print(f"contacted agency for annonce with url : `{annonce.url}`")
+        cache.add(annonce)
+    return response
 
 
-def get_latest_annonces(inbox: InboxPort):
-    
-    print(inbox.peekUnreadMails())
+def answer_annonces(inbox: InboxPort, cache: CachePort, contact: ContactInformation) -> list[requests.Response]:
+    mails = get_latest_agency_mails(inbox)
+    annonces = extract_annonces_from_mails(mails)
+    responses = [ response for response in map(lambda annonce: answer_annonce(annonce, contact), annonces)]
+    cache.save()
+    return responses
 
 
 
