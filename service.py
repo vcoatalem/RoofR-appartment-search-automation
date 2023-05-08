@@ -4,6 +4,7 @@ import os
 
 from src.domain.domain_types import Annonce, ContactInformation
 from src.adapters.inbox.gmail_adapter import GmailAdapter
+from src.adapters.cache.dynamodb_adapter import DynamodbAdapter
 from src.adapters.cache.csv_adapter import CSVAdapter
 from src.adapters.annonceApi.mock_adapter import MockAdapter
 from src.adapters.annonceApi.seloger_adapter import SeLogerAdapter
@@ -15,7 +16,7 @@ def handler(event, context):
 
     gmailAdapter = GmailAdapter.from_env()
     contact = ContactInformation.from_env()
-    csvAdapter = CSVAdapter("annonces.csv")
+    csvAdapter = DynamodbAdapter('find-a-roof')#CSVAdapter("annonces.csv")
     api = MockAdapter()
 
     csvAdapter.load()

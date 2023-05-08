@@ -31,7 +31,6 @@ def answer_annonce(annonce: Annonce, api: AnnonceAPIPort, cache: CachePort, cont
 def filter_annonces_in_cache(annonces: set[Annonce], cache: CachePort) -> set[Annonce]:
     return [ i for i in annonces if not cache.contains(i) ]
 
-
 def answer_all_annonces(inbox: InboxPort, cache: CachePort, api: AnnonceAPIPort, contact: ContactInformation) -> list[AnnonceAPIPort.Response]:
     mails = get_latest_agency_mails(inbox, read=False)
     print(f"found {len(mails)} mails")
