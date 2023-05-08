@@ -1,5 +1,3 @@
-
-
 import csv
 import os
 from typing import Optional
@@ -12,12 +10,10 @@ from domain.domain_types import Annonce
 
 class CachePort(ABC):
 
-
     def __init__(self) -> None:
         super().__init__()
-        self.annonces: list[Annonce] = []
+        self.annonces: list[Annonce] = [] # TODO: this should be a dictionary
         self.annonces_to_save: list[Annonce] = []
-
 
     @abstractmethod
     def load(self) -> list[Annonce]:
@@ -28,11 +24,12 @@ class CachePort(ABC):
         pass
 
     def add(self, annonce: Annonce):
-        self.annonces.append(annonce)
-        self.annonces_to_save.append(annonce)
+        if not any(map(lambda previousAnnonce: previousAnnonce.id == annonce.id, self.annonces)):
+            self.annonces.append(annonce)
+            self.annonces_to_save.append(annonce)
 
-    def contains(self, annonce: Annonce):
-        return any(int(annonce.id) == int(id) for annonce in self.annonces)
+    def contains(self, ann: Annonce):
+        return any(annonce.id == ann.id for annonce in self.annonces)
 
 
 
