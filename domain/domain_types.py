@@ -10,10 +10,8 @@ class Annonce:
         self.id = id
         self.url = url
 
-
-def ParseAnnonceFromUrl(url: str) -> Annonce:
-
-    def extract_annonce_id_from_url(url: str) -> int:
+    @staticmethod
+    def __extract_id_from_url(url: str) -> int:
         extract_id_pattern = r"/(\d+)\.htm"
         match = re.search(pattern=extract_id_pattern, string=url)
         if match:
@@ -21,16 +19,15 @@ def ParseAnnonceFromUrl(url: str) -> Annonce:
             return number
         return -1
 
-    res = Annonce(
-        id=extract_annonce_id_from_url(url),
-        url=url
-    )
-
-    if res.id == -1:
-        return None
-    
-    return res
-
+    @staticmethod
+    def from_url(url: str):
+        res = Annonce(
+                id=Annonce.__extract_id_from_url(url),
+                url=url
+            )
+        if res.id == -1:
+            return None
+        return res
 
 @dataclass
 class Mail():
