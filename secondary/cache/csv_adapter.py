@@ -27,11 +27,8 @@ class CSVAdapter(CachePort):
         return self.annonces
     
     def save(self) -> bool:
-        if not os.path.exists(self.filename) or not os.access(self.filename, os.R_OK):
-            return False
         with open(self.filename, 'a', newline='') as file:
-            with csv.writer(file) as writer:
-                for annonce in self.annonces_to_save:
-                    writer.writerow(CSVAdapter.__annonce_to_csv(annonce))
-            #self.annonces.append(Annonce(id, url))
+            writer = csv.writer(file)
+            for annonce in self.annonces_to_save:
+                writer.writerow(CSVAdapter.__annonce_to_csv(annonce))
         return True
