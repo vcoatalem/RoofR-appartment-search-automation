@@ -58,13 +58,20 @@ class ContactInformation:
         self.phone = phone
         self.message = message
 
+
+    @staticmethod
+    def message_from_file(filename: str):
+        with open(filename, mode="r") as f:
+            txt = f.read()
+            return txt
+
     @staticmethod
     def from_env():
         load_dotenv()
         email = os.getenv("FROM_EMAIL")
         name = os.getenv("NAME")
         phone = os.getenv("PHONE")
-        message = "Bonjour, je suis intéressé par cet appartement ! Prenez-vous actuellement des rendez-vous pour des visites ? Si oui, je suis intéressé. Je peux vous envoyer mon dossier par mail, et suis joignable au 0760912574. Vous pouvez également trouver mon dossier sur le site du gouvernement 'DossierFacile.fr' à cette adresse: https://locataire.dossierfacile.fr/file/b04472cd-9577-4115-a88f-22daa1a6ea30 . Bonne journée !"
+        message = ContactInformation.message_from_file("message.txt")
         return ContactInformation(
             email=email,
             name=name,

@@ -17,7 +17,7 @@ class DynamodbAdapter(CachePort):
 
     @staticmethod
     def __annonce_from_dynamodb(item):
-        print(item)
+        print("parsed annonce:", item)
         return Annonce(item['id']['S'], item['url']['S'])
 
     @staticmethod
