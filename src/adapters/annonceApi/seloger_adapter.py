@@ -34,21 +34,23 @@ class SeLogerAdapter(AnnonceAPIPort):
                 return AnnonceAPIPort.Response(
                     annonce=annonce,
                     wasSent=True,
-                    wasAccepted=True,
-                    error=None
+                    wasAccepted=True
+                    )
+            elif res.status_code == 404:
+                return AnnonceAPIPort.Response(
+                    annonce=annonce,
+                    wasSent=True,
+                    isOutdated=True
                     )
             else:
                 return AnnonceAPIPort.Response(
                     annonce=annonce,
                     wasSent=True,
-                    wasAccepted=False,
                     error={ "msg": res.text }
                 )
         except Exception as e:
             return AnnonceAPIPort.Response(
                 annonce=annonce,
-                wasSent=False,
-                wasAccepted=False,
                 error={ "msg":  f"{str(e)}  \n--\n  {str(e.with_traceback())}"}
             )
 

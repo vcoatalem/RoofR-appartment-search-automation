@@ -10,7 +10,7 @@ from src.domain.domain_types import Annonce
 class DynamodbAdapter(CachePort):
     def __init__(self, dynamodb_table_name: str) -> None:
         # Create a DynamoDB client
-        self.dynamodb = boto3.client('dynamodb', region_name='us-east-1')
+        self.dynamodb = boto3.client('dynamodb')
         # Define the table name
         self.table_name = dynamodb_table_name
         super().__init__()

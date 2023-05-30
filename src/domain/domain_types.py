@@ -44,7 +44,8 @@ class Mail():
         self.content = content
 
     def is_annonce(self) -> bool:
-        return "annonce" in self.subject
+        return "annonce" in self.subject \
+            or "vous adresse ses dernières exclusivités" in self.subject
     
     def __repr__(self):
         return f"mail from sender: {self.sender} with subject: {self.subject}"

@@ -17,8 +17,7 @@ class MockAdapter(AnnonceAPIPort):
         return AnnonceAPIPort.Response(
             annonce=annonce,
             wasSent=True,
-            wasAccepted=True,
-            error=None
+            wasAccepted=True
         )
 
     def find_urls_in_mail(self, mail: Mail) -> set[str]:

@@ -24,7 +24,7 @@ def extract_annonces_from_all_mails(mails: list[Mail], api: AnnonceAPIPort) -> s
 
 def answer_annonce(annonce: Annonce, api: AnnonceAPIPort, cache: CachePort, contact: ContactInformation) -> AnnonceAPIPort.Response:
     response = api.contact(annonce, contact)
-    if response.wasAccepted:
+    if response.wasAccepted or response.isOutdated:
         cache.add(annonce)
     return response
 

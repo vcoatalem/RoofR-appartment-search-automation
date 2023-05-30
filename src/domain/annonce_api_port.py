@@ -8,10 +8,11 @@ class AnnonceAPIPort(ABC):
 
     @dataclass
     class Response:
-        def __init__(self, annonce: Annonce, wasSent: bool, wasAccepted: bool, error: dict) -> None:
+        def __init__(self, annonce: Annonce, wasSent: bool = False, wasAccepted: bool = False, isOutdated: bool = False, error: dict = {}) -> None:
             self.annonce = annonce
             self.wasSent = wasSent
             self.wasAccepted = wasAccepted
+            self.isOutdated = isOutdated
             self.error = error
 
         def __repr__(self):
