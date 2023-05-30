@@ -1,7 +1,3 @@
-
-import itertools
-import os
-
 from src.domain.domain_types import Annonce, ContactInformation
 from src.adapters.inbox.gmail_adapter import GmailAdapter
 from src.adapters.cache.dynamodb_adapter import DynamodbAdapter
