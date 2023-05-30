@@ -15,7 +15,7 @@ if __name__ == '__main__':
     gmailAdapter = GmailAdapter.from_env()
     contact = ContactInformation.from_env()
     csvAdapter = CSVAdapter("annonces.csv")##DynamodbAdapter('find-a-roof')
-    api = SeLogerAdapter()#MockAdapter()
+    api = MockAdapter()
 
     csvAdapter.load()
 
