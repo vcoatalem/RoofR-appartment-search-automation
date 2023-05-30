@@ -1,1 +1,0 @@
-aws lambda update-function-code --function-name search-flat --zip-file fileb://dist/2023-04-16-230921-search-flat.zip --region eu-west-3 --profile vco
