@@ -101,6 +101,11 @@ resource "aws_ecr_repository" "repository" {
 # Create ECS task definition
 resource "aws_ecs_task_definition" "task_definition" {
   family                   = "${var.task_name}"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 1024
+  memory                   = 2048
+  execution_role_arn       = "arn:aws:iam::601899071982:role/ecsTaskExecutionRole"
   container_definitions    = <<-DEFINITION
 [
   {
@@ -156,6 +161,8 @@ resource "aws_ecs_task_definition" "task_definition" {
 ]
   DEFINITION
 }
+
+# TODO: something missing on VPC to make fargate tasks able to fetch ecr (gateway ? routing ?)
 
 # Create a VPC
 resource "aws_vpc" "my_vpc" {
