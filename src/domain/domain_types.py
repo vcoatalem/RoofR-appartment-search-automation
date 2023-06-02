@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from dataclasses import dataclass
@@ -60,7 +61,8 @@ class ContactInformation:
         self.message = message
 
     def __str__(self):
-        return f"ContactInformation for: {self.email}"
+        return f"ContactInformation for: {self.email} \n" \
+            + json.dumps({info: getattr(self, info) for info in { "email", "name", "phone", "message" }})
 
 
     @staticmethod
@@ -76,6 +78,8 @@ class ContactInformation:
         name = os.getenv("NAME")
         phone = os.getenv("PHONE")
         message = ContactInformation.message_from_file("message.txt")
+        if any(s in [None, ""] for s in [email, name, phone, message]):
+            return None
         return ContactInformation(
             email=email,
             name=name,

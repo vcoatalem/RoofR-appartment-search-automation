@@ -6,12 +6,18 @@ from src.adapters.annonceApi.seloger_adapter import SeLogerAdapter
 from src.domain.domain import answer_all_annonces
 
 if __name__ == '__main__':
-    inbox = GmailAdapter.from_env()
     contact = ContactInformation.from_env()
+    if contact is None:
+        print("Contact information not found")
+        exit(1)
+
+    inbox = GmailAdapter.from_env()
     cache = DynamodbAdapter('find-a-roof')#CSVAdapter("annonces.csv")
     api = SeLogerAdapter()
 
     print(contact)
+
+
 
     cache.load()
 
