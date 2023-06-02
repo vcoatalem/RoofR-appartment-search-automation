@@ -11,12 +11,14 @@ if __name__ == '__main__':
     cache = DynamodbAdapter('find-a-roof')#CSVAdapter("annonces.csv")
     api = SeLogerAdapter()
 
+    print(contact)
+
     cache.load()
 
-    print("annonce mails: ", answer_all_annonces(
-        inbox,
-        cache,
-        api,
-        contact
-))
+    #print("annonce mails: ", answer_all_annonces(
+    #    inbox,
+    #    cache,
+    #    api,
+    #    contact
+#))
 
