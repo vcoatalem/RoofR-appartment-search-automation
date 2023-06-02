@@ -59,6 +59,9 @@ class ContactInformation:
         self.phone = phone
         self.message = message
 
+    def __str__(self):
+        return f"ContactInformation for: {self.email}"
+
 
     @staticmethod
     def message_from_file(filename: str):
@@ -79,3 +82,5 @@ class ContactInformation:
             phone=phone,
             message=message
         )
+
+    
