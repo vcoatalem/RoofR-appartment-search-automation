@@ -17,14 +17,12 @@ if __name__ == '__main__':
 
     print(contact)
 
-
-
     cache.load()
 
-    #print("annonce mails: ", answer_all_annonces(
-    #    inbox,
-    #    cache,
-    #    api,
-    #    contact
-#))
+    print("annonce mails: ", answer_all_annonces(
+        inbox,
+        cache,
+        api,
+        contact
+    ))
 
