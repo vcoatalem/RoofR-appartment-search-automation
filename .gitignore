@@ -6,4 +6,5 @@ annonces.csv
 credentials.json
 *.pyc
 *.pickle
+*.exe
 message.txt
