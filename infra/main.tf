@@ -148,7 +148,7 @@ resource "aws_ecs_task_definition" "task_definition" {
         "value": "${var.image_name}"
       },
       {
-        "name": "AWS_ACCESS_KEY",
+        "name": "AWS_ACCESS_KEY_ID",
         "value": "${var.aws_access_key}"
       },
       {
