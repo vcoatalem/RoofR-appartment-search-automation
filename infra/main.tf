@@ -152,7 +152,7 @@ resource "aws_ecs_task_definition" "task_definition" {
         "value": "${var.aws_access_key}"
       },
       {
-        "name": "AWS_SECRET_ACCESS_KEY",
+        "name": "AWS_ACCESS_KEY_SECRET",
         "value": "${var.aws_access_key_secret}"
       },
       {
