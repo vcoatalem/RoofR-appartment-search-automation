@@ -9,16 +9,25 @@ from src.domain.domain_types import Annonce
 
 
 class DynamodbAdapter(CachePort):
-    def __init__(self, dynamodb_table_name: str) -> None:
+    def __init__(self, table_name: str, region: str) -> None:
         # Create a DynamoDB client
         self.dynamodb = boto3.client(
             'dynamodb',
-            config=Config(region_name = os.getenv("AWS_DEFAULT_REGION"))
+            config=Config(region_name = region)
         )
         
         # Define the table name
-        self.table_name = dynamodb_table_name
+        self.table_name = table_name
         super().__init__()
+
+    @staticmethod
+    def from_env():
+        region = os.getenv("AWS_DEFAULT_REGION")
+        table_name = os.getenv("DYNAMO_DB_TABLE_NAME")
+        return DynamodbAdapter(
+            table_name,
+            region
+        )
 
     @staticmethod
     def __annonce_from_dynamodb(item):

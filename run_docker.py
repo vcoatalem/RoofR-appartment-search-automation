@@ -12,7 +12,7 @@ if __name__ == '__main__':
         exit(1)
 
     inbox = GmailAdapter.from_env()
-    cache = DynamodbAdapter('find-a-roof')#CSVAdapter("annonces.csv")
+    cache = DynamodbAdapter.from_env()#CSVAdapter("annonces.csv")
     api = SeLogerAdapter()
 
     print(contact)
