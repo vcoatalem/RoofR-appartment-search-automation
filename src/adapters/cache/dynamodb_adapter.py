@@ -9,12 +9,13 @@ from src.domain.domain_types import Annonce
 
 
 class DynamodbAdapter(CachePort):
-    def __init__(self, table_name: str, region: str) -> None:
+    def __init__(self, table_name: str, region: str, aws_access_key_id: str, aws_access_key_secret: str) -> None:
         # Create a DynamoDB client
+
         self.dynamodb = boto3.client(
             'dynamodb',
-            aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID"),
-            aws_secret_access_key = os.getenv("AWS_ACCESS_KEY_SECRET")
+            aws_access_key_id = aws_access_key_id
+            aws_secret_access_key = aws_access_key_secret
             config=Config(region_name = region)
         )
         
@@ -24,11 +25,15 @@ class DynamodbAdapter(CachePort):
 
     @staticmethod
     def from_env():
+        aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+        aws_access_key_secret = os.getenv("AWS_ACCESS_KEY_SECRET")
         region = os.getenv("AWS_DEFAULT_REGION")
         table_name = os.getenv("DYNAMO_DB_TABLE_NAME")
         return DynamodbAdapter(
             table_name,
-            region
+            region,
+            aws_access_key_id,
+            aws_access_key_secret
         )
 
     @staticmethod
