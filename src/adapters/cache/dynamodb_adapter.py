@@ -13,6 +13,8 @@ class DynamodbAdapter(CachePort):
         # Create a DynamoDB client
         self.dynamodb = boto3.client(
             'dynamodb',
+            aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID"),
+            aws_secret_access_key = os.getenv("AWS_ACCESS_KEY_SECRET")
             config=Config(region_name = region)
         )
         
