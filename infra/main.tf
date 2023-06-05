@@ -98,6 +98,17 @@ resource "aws_ecr_repository" "repository" {
   name = var.repository_name
 }
 
+# Create a CloudWatch Logs Group for ECS task logs
+resource "aws_cloudwatch_log_group" "ecs_task_logs" {
+  name              = "/ecs/${var.image_name}"
+  retention_in_days = 7  # Define the number of days to retain the logs (adjust as needed)
+
+  tags = {
+    Name = "${var.image_name} job task logs"
+  }
+}
+
+
 # Create ECS task definition
 resource "aws_ecs_task_definition" "task_definition" {
   family                   = "${var.task_name}"
@@ -152,7 +163,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     "logConfiguration": {
       "logDriver": "awslogs",
       "options": {
-        "awslogs-group": "/ecs/${var.task_name}",
+        "awslogs-group": "${aws_cloudwatch_log_group.ecs_task_logs.name}",
         "awslogs-region": "${var.aws_region}",
         "awslogs-stream-prefix": "ecs"
       }
@@ -192,6 +203,24 @@ resource "aws_subnet" "my_public_subnet" {
   tags = {
     Name = "FAR-public-subnet"
   }
+}
+
+resource "aws_route_table" "my_route_table" {
+  vpc_id = aws_vpc.my_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.my_igw.id
+  }
+
+  tags = {
+    Name = "FAR-route-table"
+  }
+}
+
+resource "aws_route_table_association" "my_route_table_association" {
+  subnet_id      = aws_subnet.my_public_subnet.id
+  route_table_id = aws_route_table.my_route_table.id
 }
 
 # Create a security group allowing all inbound/outbound traffic
