@@ -114,7 +114,7 @@ resource "aws_cloudwatch_event_target" "schedule_target" {
   rule      = aws_cloudwatch_event_rule.schedule_rule.name
   target_id = "daily-job"
   arn       = module.ecs_ecr.ecs_cluster_arn //aws_ecs_cluster.cluster.arn
-  role_arn  = "arn:aws:iam::601899071982:role/ecsTaskExecutionRole"
+  role_arn  = module.ecs_ecr.ecs_task_role_arn
   ecs_target {
     task_count          = 1
     task_definition_arn = aws_ecs_task_definition.task_definition.arn
@@ -127,15 +127,21 @@ resource "aws_cloudwatch_event_target" "schedule_target" {
   }
 }
 
-# Output the ECS cluster and task information
-output "cluster_id" {
-  value = module.ecs_ecr.ecs_cluster_id
+
+
+resource "local_file" "push_to_registry_script" {
+  filename = "push-me.sh"
+  file_permission = "0744"
+  content = <<EOF
+  AWS_ACCESS_KEY_ID="${module.ecs_ecr.iam_user_access_key_id}"
+  AWS_SECRET_ACCESS_KEY="${module.ecs_ecr.iam_user_access_key_secret}"
+  AWS_DEFAULT_REGION=${var.aws_region}
+  AWS_ECR_URL=${module.ecs_ecr.ecr_repository_url}
+
+  aws ecr get-login-password --region $AWS_DEFAULT | docker login --username AWS --password-stdin $AWS_ECR_URL
+  docker build . -t $IMAGE_NAME
+  docker tag $IMAGE_NAME:latest $AWS_ECR_URL:latest
+  docker push $AWS_ECR_URL:latest
+  EOF
 }
 
-output "repository_id" {
-  value = module.ecs_ecr.ecr_repository_id
-}
-
-output "task_definition_arn" {
-  value = aws_ecs_task_definition.task_definition.arn
-}

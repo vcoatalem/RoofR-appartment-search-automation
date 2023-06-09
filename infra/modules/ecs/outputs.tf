@@ -25,3 +25,11 @@ output "task_log_group_name" {
 output "ecs_task_role_arn" {
   value = aws_iam_role.ecs_task_execution_role.arn
 }
+
+output "iam_user_access_key_id" {
+  value = aws_iam_access_key.script_user_key.id
+}
+
+output "iam_user_access_key_secret" {
+  value = aws_iam_access_key.script_user_key.secret
+}
