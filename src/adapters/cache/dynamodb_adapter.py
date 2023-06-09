@@ -26,9 +26,9 @@ class DynamodbAdapter(CachePort):
     @staticmethod
     def from_env():
         aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
-        aws_access_key_secret = os.getenv("AWS_ACCESS_KEY_SECRET")
+        aws_access_key_secret = os.getenv("AWS_SECRET_ACCESS_KEY")
         region = os.getenv("AWS_DEFAULT_REGION")
-        table_name = os.getenv("DYNAMO_DB_TABLE_NAME")
+        table_name = os.getenv("AWS_DYNAMODB_NAME")
         return DynamodbAdapter(
             table_name,
             region,
