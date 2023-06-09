@@ -1,11 +1,11 @@
-from src.domain.domain_types import Annonce, ContactInformation
-from src.adapters.inbox.gmail_adapter import GmailAdapter
-from src.adapters.cache.dynamodb_adapter import DynamodbAdapter
-from src.adapters.cache.csv_adapter import CSVAdapter
-from src.adapters.annonceApi.mock_adapter import MockAdapter
-from src.adapters.annonceApi.seloger_adapter import SeLogerAdapter
+from domain.domain_types import Annonce, ContactInformation
+from adapters.inbox.gmail_adapter import GmailAdapter
+from adapters.cache.dynamodb_adapter import DynamodbAdapter
+from adapters.cache.csv_adapter import CSVAdapter
+from adapters.annonceApi.mock_adapter import MockAdapter
+from adapters.annonceApi.seloger_adapter import SeLogerAdapter
 
-from src.domain.domain import answer_all_annonces
+from domain.domain import answer_all_annonces
 
 if __name__ == '__main__':
 

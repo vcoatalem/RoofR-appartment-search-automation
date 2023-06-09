@@ -75,9 +75,10 @@ class ContactInformation:
     def from_env():
         load_dotenv()
         email = os.getenv("FROM_EMAIL")
-        name = os.getenv("NAME")
-        phone = os.getenv("PHONE")
-        message = ContactInformation.message_from_file("message.txt")
+        name = os.getenv("FROM_NAME")
+        phone = os.getenv("FROM_PHONE")
+        message = os.getenv("FROM_MESSAGE")#ContactInformation.message_from_file("message.txt")
+        print([email, name, phone, message]) 
         if any(s in [None, ""] for s in [email, name, phone, message]):
             return None
         return ContactInformation(

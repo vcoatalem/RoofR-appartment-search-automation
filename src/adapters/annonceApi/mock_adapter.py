@@ -3,8 +3,8 @@ from urllib.parse import urlparse
 
 import requests
 
-from src.domain.annonce_api_port import AnnonceAPIPort
-from src.domain.domain_types import Annonce, ContactInformation, Mail
+from domain.annonce_api_port import AnnonceAPIPort
+from domain.domain_types import Annonce, ContactInformation, Mail
 
 
 class MockAdapter(AnnonceAPIPort):

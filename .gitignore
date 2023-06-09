@@ -4,7 +4,8 @@ env/
 dist/
 annonces.csv
 credentials.json
+message.txt
 *.pyc
 *.pickle
 *.exe
-message.txt
+.aws.credentials

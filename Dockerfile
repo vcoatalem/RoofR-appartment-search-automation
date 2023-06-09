@@ -9,4 +9,4 @@ RUN pip install -r requirements.txt
 
 ADD . /app
 
-CMD [ "python", "run_docker.py" ]
+CMD [ "python", "src/run_docker.py" ]
