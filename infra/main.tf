@@ -130,15 +130,16 @@ resource "aws_cloudwatch_event_target" "schedule_target" {
 
 
 resource "local_file" "push_to_registry_script" {
-  filename = "push-me.sh"
-  file_permission = "0744"
+  filename = "push-${var.who[0]}.sh"
+  file_permission = "744"
   content = <<EOF
   AWS_ACCESS_KEY_ID="${module.ecs_ecr.iam_user_access_key_id}"
   AWS_SECRET_ACCESS_KEY="${module.ecs_ecr.iam_user_access_key_secret}"
   AWS_DEFAULT_REGION=${var.aws_region}
   AWS_ECR_URL=${module.ecs_ecr.ecr_repository_url}
+  IMAGE_NAME=${var.who[0]}
 
-  aws ecr get-login-password --region $AWS_DEFAULT | docker login --username AWS --password-stdin $AWS_ECR_URL
+  aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ECR_URL
   docker build . -t $IMAGE_NAME
   docker tag $IMAGE_NAME:latest $AWS_ECR_URL:latest
   docker push $AWS_ECR_URL:latest

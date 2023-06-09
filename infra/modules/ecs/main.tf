@@ -128,6 +128,14 @@ resource "aws_iam_user_policy" "script_user_policy" {
                 "dynamodb:PutItem"
             ],
             "Resource": "*"
+        },
+        {
+            "Sid": "ECR",
+            "Effect": "Allow",
+            "Action": [
+                "ecr:*"
+            ],
+            "Resource": "*"
         }
     ]
   })

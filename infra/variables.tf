@@ -47,3 +47,8 @@ variable "aws_access_key" {
 variable "aws_access_key_secret" {
   description = ".env.AWS_SECRET_ACCESS_KEY"
 }
+
+variable "who" {
+  type = list(string)
+  description = "who is this for ?"
+}

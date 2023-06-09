@@ -11,3 +11,6 @@ aws_access_key_secret = "LerNYYUqUCSh8gccA8iHW5DbBCwfu2lNLJ4IWGzZ"
 from_email = "tolokonnikovadaria@gmail.com"
 from_name  = "daria.tolokonnikova"
 from_phone = "0782426750"
+
+
+who = ["dariatolo"]
