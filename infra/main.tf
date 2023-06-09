@@ -56,15 +56,15 @@ resource "aws_ecs_task_definition" "task_definition" {
       },
       {
         "name": "FROM_EMAIL",
-        "value": "${var.form_email}"
+        "value": "${var.from_email}"
       },
       {
         "name": "NAME",
-        "value": "${var.form_name}"
+        "value": "${var.from_name}"
       },
       {
         "name": "PHONE",
-        "value": "${var.form_phone}"
+        "value": "${var.from_phone}"
       },
       {
         "name": "IMAGE_NAME",

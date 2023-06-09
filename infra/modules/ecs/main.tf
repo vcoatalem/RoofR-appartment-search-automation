@@ -1,14 +1,22 @@
 
+resource "random_string" "random_key"{
+  keepers = {
+    first = "${timestamp()}"
+  }    
+  length = 16
+  special = false
+}
+
 variable "aws_region" {
     type = string
     description = "AWS Region to run the task into"
 }
 
-
 locals {
   app_name = "far"
   cluster_name = "far_cluster"
   repository_name = "far_repository"
+  task_execution_role_hash = replace(trimspace(random_string.random_key.result), "/[^a-zA-Z0-9]/", "")
 }
 
 # Create ECS cluster
@@ -29,27 +37,15 @@ resource "aws_cloudwatch_log_group" "ecs_task_logs" {
 
 }
 
-resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs-task-execution-role"
+data "aws_iam_policy" "task_execution_policy" {
+  name = "AmazonECSTaskExecutionRolePolicy"
+}
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Sid    = ""
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-      },
-    ]
-  })
-
-  inline_policy {
-    name = "runTask"
-    policy = jsonencode({
-      Version = "1012-10-17"
+/*
+resource "aws_iam_policy" "allow-run-task" {
+  name = "allow run task"
+  policy = jsonencode({
+      Version = "1012-10-17",
       Statement = [
         {
           Action = [
@@ -65,10 +61,27 @@ resource "aws_iam_role" "ecs_task_execution_role" {
         }
       ]
     })
-  }
+}
+*/
+
+resource "aws_iam_role" "ecs_task_execution_role" {
+  name = "ecs-task-execution-role-${local.task_execution_role_hash}"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      },
+    ]
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  policy_arn = data.aws_iam_policy.task_execution_policy.arn
 }

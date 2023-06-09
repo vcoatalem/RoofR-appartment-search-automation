@@ -28,16 +28,16 @@ variable "task_name" {
   description = "Name for Task Definition"
 }
 
-variable "form_email" {
+variable "from_email" {
   description = ".env.FROM_EMAIL"
 }
 
-variable "form_name" {
-  description = ".env.NAME"
+variable "from_name" {
+  description = ".env.FROM_NAME"
 }
 
-variable "form_phone" {
-  description = ".env.PHONE"
+variable "from_phone" {
+  description = ".env.FROM_PHONE"
 }
 
 variable "aws_access_key" {

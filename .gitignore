@@ -9,3 +9,6 @@ message.txt
 *.pickle
 *.exe
 .aws.credentials
+.terraform.lock.hcl
+.terraform/
+terraform.tfstate.backup
