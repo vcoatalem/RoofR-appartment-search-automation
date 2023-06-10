@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 [
   {
     "name": "${var.image_name}",
-    "image": "${module.ecs_ecr.ecr_repository_url}:latest",
+    "image": "${module.ecs_ecr.ecr_repository_url}:${var.who[0]}",
     "memory": 256,
     "cpu": 128,
     "essential": true,
@@ -59,11 +59,11 @@ resource "aws_ecs_task_definition" "task_definition" {
         "value": "${var.from_email}"
       },
       {
-        "name": "NAME",
+        "name": "FROM_NAME",
         "value": "${var.from_name}"
       },
       {
-        "name": "PHONE",
+        "name": "FROM_PHONE",
         "value": "${var.from_phone}"
       },
       {
@@ -130,7 +130,7 @@ resource "aws_cloudwatch_event_target" "schedule_target" {
 
 
 resource "local_file" "push_to_registry_script" {
-  filename = "push-${var.who[0]}.sh"
+  filename = "${path.root}/../push-${var.who[0]}.sh"
   file_permission = "744"
   content = <<EOF
   AWS_ACCESS_KEY_ID="${module.ecs_ecr.iam_user_access_key_id}"
@@ -141,8 +141,8 @@ resource "local_file" "push_to_registry_script" {
 
   aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ECR_URL
   docker build . -t $IMAGE_NAME
-  docker tag $IMAGE_NAME:latest $AWS_ECR_URL:latest
-  docker push $AWS_ECR_URL:latest
+  docker tag $IMAGE_NAME:${var.who[0]} $AWS_ECR_URL:${var.who[0]}
+  docker push $AWS_ECR_URL:${var.who[0]}
   EOF
 }
 

@@ -8,6 +8,7 @@ message.txt
 *.pyc
 *.pickle
 *.exe
+push*.sh
 .aws.credentials
 .terraform.lock.hcl
 .terraform/

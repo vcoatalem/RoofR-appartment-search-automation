@@ -7,4 +7,9 @@ terraform {
       version = ">= 5.0.0"
     }
   }
+/* 
+  backend "s3" {
+    bucket = "value"
+  }
+} */
 }
