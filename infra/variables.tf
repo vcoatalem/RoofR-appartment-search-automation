@@ -49,6 +49,6 @@ variable "aws_access_key_secret" {
 }
 
 variable "who" {
-  type = list(string)
+  type        = list(string)
   description = "who is this for ?"
 }

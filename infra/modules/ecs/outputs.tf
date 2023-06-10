@@ -15,7 +15,7 @@ output "ecr_repository_url" {
 }
 
 output "cloudwatch_logs_id" {
-    value = aws_cloudwatch_log_group.ecs_task_logs.id
+  value = aws_cloudwatch_log_group.ecs_task_logs.id
 }
 
 output "task_log_group_name" {

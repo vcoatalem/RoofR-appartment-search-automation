@@ -130,9 +130,9 @@ resource "aws_cloudwatch_event_target" "schedule_target" {
 
 
 resource "local_file" "push_to_registry_script" {
-  filename = "${path.root}/../push-${var.who[0]}.sh"
+  filename        = "${path.root}/../push-${var.who[0]}.sh"
   file_permission = "744"
-  content = <<EOF
+  content         = <<EOF
   AWS_ACCESS_KEY_ID="${module.ecs_ecr.iam_user_access_key_id}"
   AWS_SECRET_ACCESS_KEY="${module.ecs_ecr.iam_user_access_key_secret}"
   AWS_DEFAULT_REGION=${var.aws_region}

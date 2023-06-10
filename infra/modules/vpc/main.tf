@@ -1,7 +1,7 @@
 
 variable "aws_region" {
-    type = string
-    description = "AWS Region to run the task into"
+  type        = string
+  description = "AWS Region to run the task into"
 }
 
 locals {

@@ -1,13 +1,13 @@
 terraform {
   required_providers {
     random = {
-        source = "hashicorp/random"
+      source = "hashicorp/random"
     }
     aws = {
-        source = "hashicorp/aws"
+      source = "hashicorp/aws"
     }
     local = {
-        source = "hashicorp/local"
+      source = "hashicorp/local"
     }
   }
 }
