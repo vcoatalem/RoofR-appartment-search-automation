@@ -7,7 +7,6 @@ locals {
   app_name                 = "far"
   cluster_name             = "far_cluster"
   repository_name          = "far_repository"
-  task_execution_role_hash = replace(trimspace(random_string.random_key.result), "/[^a-zA-Z0-9]/", "")
 }
 
 # Create ECS cluster
@@ -33,7 +32,7 @@ data "aws_iam_policy" "task_execution_policy" {
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs-task-execution-role-${local.task_execution_role_hash}"
+  name = "ecs-task-execution-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
