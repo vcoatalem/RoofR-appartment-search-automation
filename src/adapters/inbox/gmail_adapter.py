@@ -5,6 +5,9 @@ import pickle
 from dotenv import load_dotenv
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
+from google.oauth2 import service_account
+
+
 # Gmail API utils
 from googleapiclient.discovery import build
 
@@ -18,6 +21,7 @@ class GmailAdapter(InboxPort):
     def __init__(self, email_address: str):
         super().__init__(email_address)
         self.service = self.__gmail_authenticate()
+        results = self.service.users().labels().list(userId='me').execute()
 
     @staticmethod
     def from_env():
@@ -28,8 +32,6 @@ class GmailAdapter(InboxPort):
     def __gmail_authenticate(self):
         SCOPES = ['https://mail.google.com/']
         creds = None
-        # the file token.pickle stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first time
         if os.path.exists("token.pickle"):
             with open("token.pickle", "rb") as token:
                 creds = pickle.load(token)

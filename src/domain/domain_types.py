@@ -77,8 +77,7 @@ class ContactInformation:
         email = os.getenv("FROM_EMAIL")
         name = os.getenv("FROM_NAME")
         phone = os.getenv("FROM_PHONE")
-        message = os.getenv("FROM_MESSAGE")#ContactInformation.message_from_file("message.txt")
-        print([email, name, phone, message]) 
+        message = os.getenv("FROM_MESSAGE")
         if any(s in [None, ""] for s in [email, name, phone, message]):
             return None
         return ContactInformation(
