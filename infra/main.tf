@@ -141,8 +141,8 @@ resource "local_file" "push_to_registry_script" {
 
   aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ECR_URL
   docker build . -t $IMAGE_NAME
-  docker tag $IMAGE_NAME:${var.who[0]} $AWS_ECR_URL:${var.who[0]}
-  docker push $AWS_ECR_URL:${var.who[0]}
+  docker tag $IMAGE_NAME $AWS_ECR_URL:$IMAGE_NAME
+  docker push $AWS_ECR_URL:$IMAGE_NAME
   EOF
 }
 
