@@ -21,7 +21,6 @@ class GmailAdapter(InboxPort):
     def __init__(self, email_address: str):
         super().__init__(email_address)
         self.service = self.__gmail_authenticate()
-        results = self.service.users().labels().list(userId='me').execute()
 
     @staticmethod
     def from_env():

@@ -51,8 +51,8 @@ resource "aws_ecs_task_definition" "task_definition" {
     "command": [],
     "environment": [
       {
-        "name": "DYNAMO_DB_TABLE_NAME",
-        "value": "${var.table_name}"
+        "name": "AWS_DYNAMODB_NAME",
+        "value": "${aws_dynamodb_table.table.name}"
       },
       {
         "name": "FROM_EMAIL",
@@ -67,16 +67,20 @@ resource "aws_ecs_task_definition" "task_definition" {
         "value": "${var.from_phone}"
       },
       {
+        "name": "FROM_MESSAGE",
+        "value": "${var.from_message}"
+      },
+      {
         "name": "IMAGE_NAME",
         "value": "${var.image_name}"
       },
       {
         "name": "AWS_ACCESS_KEY_ID",
-        "value": "${var.aws_access_key}"
+        "value": "${module.ecs_ecr.iam_user_access_key_id}"
       },
       {
-        "name": "AWS_ACCESS_KEY_SECRET",
-        "value": "${var.aws_access_key_secret}"
+        "name": "AWS_SECRET_ACCESS_KEY",
+        "value": "${module.ecs_ecr.iam_user_access_key_secret}"
       },
       {
         "name": "AWS_DEFAULT_REGION",
