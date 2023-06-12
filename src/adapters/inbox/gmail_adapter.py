@@ -21,7 +21,6 @@ class GmailAdapter(InboxPort):
     def __init__(self, email_address: str):
         super().__init__(email_address)
         self.service = self.__gmail_authenticate()
-        results = self.service.users().labels().list(userId='me').execute()
 
     @staticmethod
     def from_env():
@@ -30,7 +29,7 @@ class GmailAdapter(InboxPort):
         return GmailAdapter(mail)
 
     def __gmail_authenticate(self):
-        SCOPES = ['https://mail.google.com/']
+        SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
         creds = None
         if os.path.exists("token.pickle"):
             with open("token.pickle", "rb") as token:
