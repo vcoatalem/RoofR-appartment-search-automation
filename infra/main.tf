@@ -5,6 +5,8 @@
 module "ecs_ecr" {
   source     = "./modules/ecs"
   aws_region = var.aws_region
+  cluster_name = var.cluster_name
+  repository_name = var.repository_name
 }
 
 module "vpc" {
@@ -123,8 +125,8 @@ resource "local_file" "push_to_registry_script" {
   filename        = "${path.root}/generated-scripts/push-${var.who[0]}.sh"
   file_permission = "744"
   content         = <<EOF
-AWS_ACCESS_KEY_ID="${module.dynamodb.iam_user_access_key_id}"
-AWS_SECRET_ACCESS_KEY="${module.dynamodb.iam_user_access_key_secret}"
+AWS_ACCESS_KEY_ID=${module.dynamodb.iam_user_access_key_id}
+AWS_SECRET_ACCESS_KEY=${module.dynamodb.iam_user_access_key_secret}
 AWS_DEFAULT_REGION=${var.aws_region}
 AWS_ECR_URL=${module.ecs_ecr.ecr_repository_url}
 IMAGE_NAME=${var.who[0]}
@@ -141,9 +143,9 @@ resource "local_file" "run_task_script" {
   filename        = "${path.root}/generated-scripts/test-${var.who[0]}.sh"
   file_permission = "744"
   content         = <<EOF
-export AWS_ACCESS_KEY_ID=${module.ecs_ecr.iam_user_access_key_id}
-export AWS_SECRET_ACCESS_KEY=${module.ecs_ecr.iam_user_access_key_secret}
-export AWS_DEFAULT_REGION=${var.aws_region}
+AWS_ACCESS_KEY_ID=${module.ecs_ecr.iam_user_access_key_id}
+AWS_SECRET_ACCESS_KEY=${module.ecs_ecr.iam_user_access_key_secret}
+AWS_DEFAULT_REGION=${var.aws_region}
 
 AWS_CLUSTER_NAME=${var.cluster_name}
 TASK_NAME=${var.task_name}

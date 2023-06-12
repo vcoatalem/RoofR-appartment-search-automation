@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "instance-assume-role-policy" {
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs-${local.app_name}-task-execution-role"
+  name = "ecs-far-task-execution-role"
   assume_role_policy = data.aws_iam_policy_document.instance-assume-role-policy.json
 }
 
@@ -25,7 +25,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
 }
 
 resource "aws_iam_user" "script_user" {
-  name = "${local.app_name}-service-user"
+  name = "far-service-user"
 }
 
 resource "aws_iam_access_key" "script_user_key" {
@@ -33,7 +33,7 @@ resource "aws_iam_access_key" "script_user_key" {
 }
 
 resource "aws_iam_user_policy" "script_user_policy" {
-  name = "${local.app_name}-service-user-policy"
+  name = "far-service-user-policy"
   user = aws_iam_user.script_user.name
   policy = jsonencode({
     Version = "2012-10-17"

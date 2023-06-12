@@ -3,8 +3,13 @@ variable "aws_region" {
   description = "AWS Region to run the task into"
 }
 
-locals {
-  app_name                 = "far"
-  cluster_name             = "far_cluster"
-  repository_name          = "far_repository"
+variable "cluster_name" {
+    type = string
+    description = "Name for our ECS Cluster"
+  
+}
+
+variable "repository_name" {
+  type = string
+  description = "Name for our ECR Repository"
 }
