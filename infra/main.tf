@@ -130,7 +130,8 @@ AWS_ECR_URL=${module.ecs_ecr.ecr_repository_url}
 IMAGE_NAME=${var.who[0]}
 
 aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ECR_URL
-docker build . -t $IMAGE_NAME
+cd ${path.root}/..
+docker build . -t $IMAGE_NAME -f Dockerfile
 docker tag $IMAGE_NAME $AWS_ECR_URL:$IMAGE_NAME
 docker push $AWS_ECR_URL:$IMAGE_NAME
 EOF
