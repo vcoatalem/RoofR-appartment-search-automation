@@ -5,8 +5,6 @@ image_name      = "FAR-job"
 task_name       = "run-FAR"
 
 aws_region            = "eu-west-1"
-aws_access_key        = "AKIAYYI727HXKBMT2XMI"
-aws_secret_access_key = "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"
 
 from_email = "tolokonnikovadaria@gmail.com"
 from_name  = "daria.tolokonnikova"

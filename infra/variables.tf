@@ -53,15 +53,6 @@ variable "from_message" {
   description = ".env.FROM_MESSAGE"
 }
 
-
-variable "aws_access_key" {
-  description = ".env.AWS_ACCESS_KEY_ID"
-}
-
-variable "aws_secret_access_key" {
-  description = ".env.AWS_SECRET_ACCESS_KEY"
-}
-
 variable "who" {
   type        = list(string)
   description = "who is this for ?"
