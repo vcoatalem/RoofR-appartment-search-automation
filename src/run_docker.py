@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     inbox = GmailAdapter.from_env()
     cache = DynamodbAdapter.from_env()#CSVAdapter("annonces.csv")
-    api = MockAdapter()#SeLogerAdapter()
+    api = SeLogerAdapter()
 
     print(contact)
 

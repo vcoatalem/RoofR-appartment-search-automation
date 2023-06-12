@@ -29,7 +29,7 @@ class GmailAdapter(InboxPort):
         return GmailAdapter(mail)
 
     def __gmail_authenticate(self):
-        SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+        SCOPES = ['https://mail.google.com/']
         creds = None
         if os.path.exists("token.pickle"):
             with open("token.pickle", "rb") as token:
