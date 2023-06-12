@@ -8,8 +8,8 @@ message.txt
 *.pyc
 *.pickle
 *.exe
-push*.sh
 .aws.credentials
 .terraform.lock.hcl
 .terraform/
 terraform.tfstate.backup
+*/generated-scripts/*
