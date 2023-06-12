@@ -67,6 +67,10 @@ resource "aws_ecs_task_definition" "task_definition" {
         "value": "${var.from_phone}"
       },
       {
+        "name": "FROM_MESSAGE",
+        "value": "${var.from_message}"
+      },
+      {
         "name": "IMAGE_NAME",
         "value": "${var.image_name}"
       },
@@ -75,8 +79,8 @@ resource "aws_ecs_task_definition" "task_definition" {
         "value": "${var.aws_access_key}"
       },
       {
-        "name": "AWS_ACCESS_KEY_SECRET",
-        "value": "${var.aws_access_key_secret}"
+        "name": "AWS_SECRET_ACCESS_KEY",
+        "value": "${var.aws_secret_access_key}"
       },
       {
         "name": "AWS_DEFAULT_REGION",
