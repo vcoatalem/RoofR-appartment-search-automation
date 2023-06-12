@@ -50,7 +50,8 @@ resource "aws_iam_user_policy" "script_user_policy" {
         "Sid" : "ECS",
         "Effect" : "Allow",
         "Action" : [
-          "ecs:RunTask"
+          "ecs:RunTask",
+          "ecs:ListClusters"
         ],
         "Resource" : "*"
       },
