@@ -1,25 +1,6 @@
 
 # Create DynamoDB table
-resource "aws_dynamodb_table" "table" {
-  name         = var.table_name
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "id"
-  attribute {
-    name = "id"
-    type = "S"
-  }
-  attribute {
-    name = "url"
-    type = "S"
-  }
-  global_secondary_index {
-    name            = "urlIndex"
-    hash_key        = "url"
-    projection_type = "ALL"
-    read_capacity   = 5
-    write_capacity  = 5
-  }
-}
+
 
 module "ecs_ecr" {
   source     = "./modules/ecs"
@@ -31,6 +12,11 @@ module "vpc" {
   aws_region = var.aws_region
 }
 
+module "dynamodb" {
+  source     = "./modules/dynamodb"
+  aws_region = var.aws_region
+  table_name = var.table_name
+}
 
 # Create ECS task definition
 resource "aws_ecs_task_definition" "task_definition" {
@@ -52,7 +38,7 @@ resource "aws_ecs_task_definition" "task_definition" {
     "environment": [
       {
         "name": "AWS_DYNAMODB_NAME",
-        "value": "${aws_dynamodb_table.table.name}"
+        "value": "${module.dynamodb.dynamodb_table_name}"
       },
       {
         "name": "FROM_EMAIL",
@@ -76,11 +62,11 @@ resource "aws_ecs_task_definition" "task_definition" {
       },
       {
         "name": "AWS_ACCESS_KEY_ID",
-        "value": "${module.ecs_ecr.iam_user_access_key_id}"
+        "value": "${module.dynamodb.iam_user_access_key_id}"
       },
       {
         "name": "AWS_SECRET_ACCESS_KEY",
-        "value": "${module.ecs_ecr.iam_user_access_key_secret}"
+        "value": "${module.dynamodb.iam_user_access_key_secret}"
       },
       {
         "name": "AWS_DEFAULT_REGION",
@@ -134,20 +120,43 @@ resource "aws_cloudwatch_event_target" "schedule_target" {
 
 
 resource "local_file" "push_to_registry_script" {
-  filename        = "${path.root}/../push-${var.who[0]}.sh"
+  filename        = "${path.root}/generated-scripts/push-${var.who[0]}.sh"
   file_permission = "744"
   content         = <<EOF
-  AWS_ACCESS_KEY_ID="${module.ecs_ecr.iam_user_access_key_id}"
-  AWS_SECRET_ACCESS_KEY="${module.ecs_ecr.iam_user_access_key_secret}"
-  AWS_DEFAULT_REGION=${var.aws_region}
-  AWS_ECR_URL=${module.ecs_ecr.ecr_repository_url}
-  IMAGE_NAME=${var.who[0]}
+AWS_ACCESS_KEY_ID="${module.dynamodb.iam_user_access_key_id}"
+AWS_SECRET_ACCESS_KEY="${module.dynamodb.iam_user_access_key_secret}"
+AWS_DEFAULT_REGION=${var.aws_region}
+AWS_ECR_URL=${module.ecs_ecr.ecr_repository_url}
+IMAGE_NAME=${var.who[0]}
 
-  aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ECR_URL
-  docker build . -t $IMAGE_NAME
-  docker tag $IMAGE_NAME $AWS_ECR_URL:$IMAGE_NAME
-  docker push $AWS_ECR_URL:$IMAGE_NAME
-  EOF
+aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ECR_URL
+docker build . -t $IMAGE_NAME
+docker tag $IMAGE_NAME $AWS_ECR_URL:$IMAGE_NAME
+docker push $AWS_ECR_URL:$IMAGE_NAME
+EOF
 }
+
+resource "local_file" "run_task_script" {
+  filename        = "${path.root}/generated-scripts/test-${var.who[0]}.sh"
+  file_permission = "744"
+  content         = <<EOF
+export AWS_ACCESS_KEY_ID=${module.ecs_ecr.iam_user_access_key_id}
+export AWS_SECRET_ACCESS_KEY=${module.ecs_ecr.iam_user_access_key_secret}
+export AWS_DEFAULT_REGION=${var.aws_region}
+
+AWS_CLUSTER_NAME=${var.cluster_name}
+TASK_NAME=${var.task_name}
+TASK_DEFINITION_REVISION=${aws_ecs_task_definition.task_definition.revision}
+
+SUBNET_ID=${module.vpc.public_subnet_id}
+SECURITY_GROUP_ID=${module.vpc.security_group_id}
+
+aws ecs run-task --launch-type FARGATE \
+    --cluster $AWS_CLUSTER_NAME \
+    --task-definition $TASK_NAME:$TASK_DEFINITION_REVISION \
+    --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ID],securityGroups=[$SECURITY_GROUP_ID],assignPublicIp=ENABLED}"
+EOF
+}
+
 
 
