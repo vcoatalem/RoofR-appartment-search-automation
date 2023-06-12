@@ -102,6 +102,22 @@ resource "aws_iam_user_policy" "script_user_policy" {
           "ecr:*"
         ],
         "Resource" : "*"
+      },
+      {
+        "Sid" : "ECS",
+        "Effect" : "Allow",
+        "Action" : [
+          "ecs:RunTask"
+        ],
+        "Resource" : "*"
+      },
+      {
+        "Sid": "IAM",
+        "Effect": "Allow",
+        "Action": [
+          "iam:PassRole"
+        ],
+        "Resource": "*"
       }
     ]
   })

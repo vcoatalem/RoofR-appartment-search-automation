@@ -146,3 +146,4 @@ resource "local_file" "push_to_registry_script" {
   EOF
 }
 
+
