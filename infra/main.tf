@@ -10,10 +10,46 @@ module "ecs_ecr" {
 }
 
 module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.0.0"
+  
+  name = "${var.application_name} VPC"
+
+  cidr = "10.0.0.0/16"
+
+  azs = ["${var.aws_region}a"]
+
+  public_subnets = ["10.0.1.0/24"]
+  public_subnet_names = ["public subnet"]
+
+  create_igw = true
+  
+
+  default_security_group_name = "default: do not use"
+  default_security_group_egress = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+  default_security_group_ingress = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+}
+
+/* 
+module "vpc" {
   source     = "./modules/vpc"
   aws_region = var.aws_region
 }
-
+ */
 module "dynamodb" {
   source     = "./modules/dynamodb"
   aws_region = var.aws_region
@@ -112,8 +148,8 @@ resource "aws_cloudwatch_event_target" "schedule_target" {
     task_definition_arn = aws_ecs_task_definition.task_definition.arn
     launch_type         = "FARGATE"
     network_configuration {
-      subnets          = [module.vpc.public_subnet_id]
-      security_groups  = [module.vpc.security_group_id]
+      subnets          = [module.vpc.public_subnets[0]]
+      security_groups  = [module.vpc.default_security_group_id]
       assign_public_ip = true
     }
   }
@@ -151,8 +187,8 @@ AWS_CLUSTER_NAME=${var.cluster_name}
 TASK_NAME=${var.task_name}
 TASK_DEFINITION_REVISION=${aws_ecs_task_definition.task_definition.revision}
 
-SUBNET_ID=${module.vpc.public_subnet_id}
-SECURITY_GROUP_ID=${module.vpc.security_group_id}
+SUBNET_ID=${module.vpc.public_subnets[0]}
+SECURITY_GROUP_ID=${module.vpc.default_security_group_id}
 
 aws ecs run-task --launch-type FARGATE \
     --cluster $AWS_CLUSTER_NAME \
