@@ -9,13 +9,20 @@ terraform {
     
   }
 
-  cloud {
+  backend "remote" {
+    hostname = "app.terraform.io"
     organization = "victorcoatalem"
-
     workspaces {
-      name = "example-workspace"
+      name = "test"
     }
   }
+
+/*   cloud {
+    organization = "victorcoatalem"
+    workspaces {
+      name = "find-a-roof"
+    }
+  } */
   /*
   backend "s3" {
     bucket = "tfstate-far"
