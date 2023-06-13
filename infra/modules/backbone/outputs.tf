@@ -6,6 +6,15 @@ output "ecr_repository_arn" {
   value = module.ecr.ecr_repository_arn
 }
 
+output "ecr_admin_user_key_id" {
+    value = module.ecr.iam_user_access_key_id
+}
+
+output "ecr_admin_user_key_secret" {
+  value = module.ecr.iam_user_access_key_secret
+  sensitive = true
+}
+
 output "cloudwatch_task_log_group_name" {
   value = module.ecs.task_log_group_name
 }

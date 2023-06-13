@@ -35,8 +35,8 @@ resource "local_file" "push_to_registry_script" {
   filename        = "${path.root}/generated-scripts/push-${each.key}.sh"
   file_permission = "744"
   content         = <<EOF
-export AWS_ACCESS_KEY_ID=${module.worker[each.key].dynamodb_admin_user_key_id}
-export AWS_SECRET_ACCESS_KEY=${module.worker[each.key].dynamodb_admin_user_key_secret}
+export AWS_ACCESS_KEY_ID=${module.backbone.ecr_admin_user_key_id}
+export AWS_SECRET_ACCESS_KEY=${module.backbone.ecr_admin_user_key_secret}
 export AWS_DEFAULT_REGION=${var.aws_region}
 AWS_ECR_URL=${module.backbone.ecr_repository_url}
 IMAGE_NAME=${each.key}
