@@ -6,7 +6,7 @@ provider "aws" {
   default_tags {
     tags = {
       "Terraform" : true
-      "App Name" : var.application_name
+      "Purpose" : local.prefix
     }
   }
 }

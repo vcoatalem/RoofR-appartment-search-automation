@@ -1,12 +1,6 @@
 # Create ECS cluster
 resource "aws_ecs_cluster" "cluster" {
-  name = var.cluster_name
-}
-
-# Create ECR repository
-resource "aws_ecr_repository" "repository" {
-  name         = var.repository_name
-  force_delete = true
+  name = local.cluster_name
 }
 
 # Create a CloudWatch Logs Group for ECS task logs

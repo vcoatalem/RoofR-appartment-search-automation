@@ -1,171 +1,45 @@
+locals {
+  prefix = "far"
+}
 
-# Create DynamoDB table
-
-
-module "ecs_ecr" {
-  source     = "./modules/ecs"
+module "backbone" {
+  source     = "./modules/backbone"
   aws_region = var.aws_region
-  cluster_name = var.cluster_name
-  repository_name = var.repository_name
+  app_name     = local.prefix
 }
 
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.0.0"
-  
-  name = "${var.application_name} VPC"
 
-  cidr = "10.0.0.0/16"
+module "worker" {
+  for_each = var.contacts
 
-  azs = ["${var.aws_region}a"]
-
-  public_subnets = ["10.0.1.0/24"]
-  public_subnet_names = ["public subnet"]
-
-  create_igw = true
-  
-
-  default_security_group_name = "default: do not use"
-  default_security_group_egress = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = "0.0.0.0/0"
-    }
-  ]
-  default_security_group_ingress = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = "0.0.0.0/0"
-    }
-  ]
-}
-
-/* 
-module "vpc" {
-  source     = "./modules/vpc"
+  source     = "./modules/worker"
   aws_region = var.aws_region
+  app_name     = "${local.prefix}_4_${each.key}"
+
+  user_props = each.value
+
+  vpc_subnet_id = module.backbone.vpc_public_subnet_id
+  vpc_default_security_group_id = module.backbone.vpc_default_security_group_id
+
+  ecs_task_execution_role_arn = module.backbone.ecs_task_execution_role_arn
+  ecs_cluster_arn = module.backbone.ecs_cluster_arn
+  cloudwatch_task_log_group_name = module.backbone.cloudwatch_task_log_group_name
+
+  ecr_repository_url = module.backbone.ecr_repository_url
+  ecr_repository_arn = module.backbone.ecr_repository_arn
 }
- */
-module "dynamodb" {
-  source     = "./modules/dynamodb"
-  aws_region = var.aws_region
-  table_name = var.table_name
-}
-
-# Create ECS task definition
-resource "aws_ecs_task_definition" "task_definition" {
-  family                   = var.task_name
-  requires_compatibilities = ["FARGATE"]
-  network_mode             = "awsvpc"
-  cpu                      = 1024
-  memory                   = 2048
-  execution_role_arn       = module.ecs_ecr.ecs_task_role_arn
-  container_definitions    = <<-DEFINITION
-[
-  {
-    "name": "${var.image_name}",
-    "image": "${module.ecs_ecr.ecr_repository_url}:${var.who[0]}",
-    "memory": 256,
-    "cpu": 128,
-    "essential": true,
-    "command": [],
-    "environment": [
-      {
-        "name": "AWS_DYNAMODB_NAME",
-        "value": "${module.dynamodb.dynamodb_table_name}"
-      },
-      {
-        "name": "FROM_EMAIL",
-        "value": "${var.from_email}"
-      },
-      {
-        "name": "FROM_NAME",
-        "value": "${var.from_name}"
-      },
-      {
-        "name": "FROM_PHONE",
-        "value": "${var.from_phone}"
-      },
-      {
-        "name": "FROM_MESSAGE",
-        "value": "${var.from_message}"
-      },
-      {
-        "name": "IMAGE_NAME",
-        "value": "${var.image_name}"
-      },
-      {
-        "name": "AWS_ACCESS_KEY_ID",
-        "value": "${module.dynamodb.iam_user_access_key_id}"
-      },
-      {
-        "name": "AWS_SECRET_ACCESS_KEY",
-        "value": "${module.dynamodb.iam_user_access_key_secret}"
-      },
-      {
-        "name": "AWS_DEFAULT_REGION",
-        "value": "${var.aws_region}"
-      }
-    ],
-    "logConfiguration": {
-      "logDriver": "awslogs",
-      "options": {
-        "awslogs-group": "${module.ecs_ecr.task_log_group_name}",
-        "awslogs-region": "${var.aws_region}",
-        "awslogs-stream-prefix": "ecs"
-      }
-    }
-  }
-]
-  DEFINITION
-}
-
-# TODO: something missing on VPC to make fargate tasks able to fetch ecr (gateway ? routing ?)
-
-# Create scheduled ECS task
-resource "aws_cloudwatch_event_rule" "schedule_rule" {
-  name        = "schedule-${var.task_name}"
-  description = "Run ECS task ${var.task_name} daily at 8 am"
-
-  schedule_expression = "cron(0 8 * * ? *)"
-
-  tags = {
-    Name = "schedule-${var.task_name}"
-  }
-}
-
-resource "aws_cloudwatch_event_target" "schedule_target" {
-  rule      = aws_cloudwatch_event_rule.schedule_rule.name
-  target_id = "daily-job"
-  arn       = module.ecs_ecr.ecs_cluster_arn //aws_ecs_cluster.cluster.arn
-  role_arn  = module.ecs_ecr.ecs_task_role_arn
-  ecs_target {
-    task_count          = 1
-    task_definition_arn = aws_ecs_task_definition.task_definition.arn
-    launch_type         = "FARGATE"
-    network_configuration {
-      subnets          = [module.vpc.public_subnets[0]]
-      security_groups  = [module.vpc.default_security_group_id]
-      assign_public_ip = true
-    }
-  }
-}
-
 
 
 resource "local_file" "push_to_registry_script" {
-  filename        = "${path.root}/generated-scripts/push-${var.who[0]}.sh"
+  for_each = var.contacts
+  filename        = "${path.root}/generated-scripts/push-${each.key}.sh"
   file_permission = "744"
   content         = <<EOF
-export AWS_ACCESS_KEY_ID=${module.dynamodb.iam_user_access_key_id}
-export AWS_SECRET_ACCESS_KEY=${module.dynamodb.iam_user_access_key_secret}
+export AWS_ACCESS_KEY_ID=${module.worker[each.key].dynamodb_admin_user_key_id}
+export AWS_SECRET_ACCESS_KEY=${module.worker[each.key].dynamodb_admin_user_key_secret}
 export AWS_DEFAULT_REGION=${var.aws_region}
-AWS_ECR_URL=${module.ecs_ecr.ecr_repository_url}
-IMAGE_NAME=${var.who[0]}
+AWS_ECR_URL=${module.backbone.ecr_repository_url}
+IMAGE_NAME=${each.key}
 
 aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ECR_URL
 cd ${path.root}/..
@@ -175,16 +49,17 @@ docker push $AWS_ECR_URL:$IMAGE_NAME
 EOF
 }
 
+/*
 resource "local_file" "run_task_script" {
-  filename        = "${path.root}/generated-scripts/test-${var.who[0]}.sh"
+  filename        = "${path.root}/generated-scripts/test-dariatolo.sh"
   file_permission = "744"
   content         = <<EOF
-export AWS_ACCESS_KEY_ID=${module.ecs_ecr.iam_user_access_key_id}
-export AWS_SECRET_ACCESS_KEY=${module.ecs_ecr.iam_user_access_key_secret}
+export AWS_ACCESS_KEY_ID=${module.ecs.iam_user_access_key_id}
+export AWS_SECRET_ACCESS_KEY=${module.ecs.iam_user_access_key_secret}
 export AWS_DEFAULT_REGION=${var.aws_region}
 
-AWS_CLUSTER_NAME=${var.cluster_name}
-TASK_NAME=${var.task_name}
+AWS_CLUSTER_NAME=${module.backbone.cluster_name}
+TASK_NAME=${module.}
 TASK_DEFINITION_REVISION=${aws_ecs_task_definition.task_definition.revision}
 
 SUBNET_ID=${module.vpc.public_subnets[0]}
@@ -196,6 +71,7 @@ aws ecs run-task --launch-type FARGATE \
     --network-configuration "awsvpcConfiguration={subnets=[$SUBNET_ID],securityGroups=[$SECURITY_GROUP_ID],assignPublicIp=ENABLED}"
 EOF
 }
+*/
 
 
 

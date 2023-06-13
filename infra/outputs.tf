@@ -1,16 +1,3 @@
-# Output the ECS cluster and task information
-output "cluster_id" {
-  value = module.ecs_ecr.ecs_cluster_id
-}
-
-output "repository_id" {
-  value = module.ecs_ecr.ecr_repository_id
-}
-
-output "task_definition_arn" {
-  value = aws_ecs_task_definition.task_definition.arn
-}
-
-output "task_definition_revision" {
-  value = aws_ecs_task_definition.task_definition.revision
+output "backbone_ecr_repository_url" {
+  value = module.backbone.ecr_repository_url
 }

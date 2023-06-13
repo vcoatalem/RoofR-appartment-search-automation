@@ -1,14 +1,14 @@
-resource "aws_iam_user" "far_user" {
-  name = "far-user"
+resource "aws_iam_user" "dynamodb_user" {
+  name = local.user_name
 }
 
-resource "aws_iam_access_key" "far_user_key" {
-  user = aws_iam_user.far_user.name
+resource "aws_iam_access_key" "dynamodb_user_key" {
+  user = aws_iam_user.dynamodb_user.name
 }
 
-resource "aws_iam_user_policy" "script_user_policy" {
-  name = "far-user-policy"
-  user = aws_iam_user.far_user.name
+resource "aws_iam_user_policy" "dynamodb_user_policy" {
+  name = local.policy_name
+  user = aws_iam_user.dynamodb_user.name
   policy = jsonencode({
     Version = "2012-10-17"
     "Statement" : [

@@ -15,7 +15,7 @@ data "aws_iam_policy_document" "instance-assume-role-policy" {
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecs-far-task-execution-role"
+  name               = local.task_execution_role_name
   assume_role_policy = data.aws_iam_policy_document.instance-assume-role-policy.json
 }
 
@@ -24,17 +24,17 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_policy" {
   policy_arn = data.aws_iam_policy.task_execution_policy.arn
 }
 
-resource "aws_iam_user" "script_user" {
-  name = "far-service-user"
+resource "aws_iam_user" "task_execution_user" {
+  name = local.task_execution_user_name
 }
 
-resource "aws_iam_access_key" "script_user_key" {
-  user = aws_iam_user.script_user.name
+resource "aws_iam_access_key" "task_execution_user_key" {
+  user = aws_iam_user.task_execution_user.name
 }
 
-resource "aws_iam_user_policy" "script_user_policy" {
-  name = "far-service-user-policy"
-  user = aws_iam_user.script_user.name
+resource "aws_iam_user_policy" "task_execution_user_policy" {
+  name = local.task_execution_user_policy_name
+  user = aws_iam_user.task_execution_user.name
   policy = jsonencode({
     Version = "2012-10-17"
     "Statement" : [
@@ -56,12 +56,12 @@ resource "aws_iam_user_policy" "script_user_policy" {
         "Resource" : "*"
       },
       {
-        "Sid": "IAM",
-        "Effect": "Allow",
-        "Action": [
+        "Sid" : "IAM",
+        "Effect" : "Allow",
+        "Action" : [
           "iam:PassRole"
         ],
-        "Resource": "*"
+        "Resource" : "*"
       }
     ]
   })

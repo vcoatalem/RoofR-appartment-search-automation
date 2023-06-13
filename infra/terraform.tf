@@ -6,18 +6,18 @@ terraform {
       source  = "hashicorp/aws"
       version = ">= 5.0.0"
     }
-    
+
   }
 
   backend "remote" {
-    hostname = "app.terraform.io"
+    hostname     = "app.terraform.io"
     organization = "victorcoatalem"
     workspaces {
       name = "test"
     }
   }
 
-/*   cloud {
+  /*   cloud {
     organization = "victorcoatalem"
     workspaces {
       name = "find-a-roof"
