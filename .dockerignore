@@ -1,0 +1,9 @@
+.env
+/*/.env
+.git
+.gitignore
+*.csv
+*.sh
+Dockerfile
+env/
+infra/

@@ -1,6 +1,15 @@
 env/
 .env
+.venv/
+dist/
 annonces.csv
 credentials.json
+message.txt
 *.pyc
 *.pickle
+*.exe
+.aws.credentials
+.terraform.lock.hcl
+.terraform/
+terraform.tfstate.backup
+*/generated-scripts/*
